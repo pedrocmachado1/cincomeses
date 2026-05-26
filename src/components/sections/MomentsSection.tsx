@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { gsap, ScrollTrigger } from '@/lib/gsap'
+import { gsap } from '@/lib/gsap'
 import { MONTHS } from '@/lib/constants'
 
 export default function MomentsSection() {
@@ -8,70 +8,10 @@ export default function MomentsSection() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // Cada bloco de mês entra da direita com fade
-      gsap.utils.toArray<HTMLElement>('.month-block').forEach((block) => {
-        gsap.fromTo(block,
-          { opacity: 0, x: 60 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: block,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        )
-      })
-
-      // Label do mês sobe com delay
-      gsap.utils.toArray<HTMLElement>('.month-label').forEach((label) => {
-        gsap.fromTo(label,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: 0.2,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: label,
-              start: 'top 88%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        )
-      })
-
-      // Fotos entram em stagger dentro de cada bloco
-      gsap.utils.toArray<HTMLElement>('.month-block').forEach((block) => {
-        const photos = block.querySelectorAll<HTMLElement>('.photo-item')
-        gsap.fromTo(photos,
-          { opacity: 0, scale: 0.92, y: 24 },
-          {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.9,
-            stagger: 0.15,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: block,
-              start: 'top 80%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        )
-      })
-
-      // Linha vertical do timeline cresce no scroll
       gsap.fromTo('.timeline-line',
         { scaleY: 0, transformOrigin: 'top center' },
         {
           scaleY: 1,
-          duration: 1.5,
           ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
@@ -82,29 +22,108 @@ export default function MomentsSection() {
         }
       )
 
+      gsap.utils.toArray<HTMLElement>('.month-block').forEach((block) => {
+
+        const dot = block.querySelector<HTMLElement>('.timeline-dot')
+        if (dot) {
+          gsap.fromTo(dot,
+            { scale: 0, opacity: 0 },
+            {
+              scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)',
+              scrollTrigger: { trigger: block, start: 'top 80%' },
+            }
+          )
+          gsap.to(dot, {
+            boxShadow: '0 0 12px 4px #C8871A88',
+            duration: 1, repeat: -1, yoyo: true,
+            ease: 'power1.inOut', delay: 0.5,
+          })
+        }
+
+        gsap.fromTo(block.querySelector('.month-label'),
+          { opacity: 0, x: -30 },
+          {
+            opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: block,
+              start: 'top 82%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        )
+
+        // Polaroids entram com rotação e queda — como jogando sobre a mesa
+        const photos = block.querySelectorAll<HTMLElement>('.photo-item')
+        photos.forEach((photo, i) => {
+          const rotate = i % 2 === 0
+            ? -4 + Math.random() * 3
+            :  2 + Math.random() * 3
+
+          gsap.set(photo, { rotation: rotate })
+
+          gsap.fromTo(photo,
+            { opacity: 0, y: -40, rotation: rotate + (Math.random() > 0.5 ? 15 : -15), scale: 0.85 },
+            {
+              opacity: 1, y: 0, rotation: rotate, scale: 1,
+              duration: 0.9,
+              delay: i * 0.25,
+              ease: 'back.out(1.4)',
+              scrollTrigger: {
+                trigger: block,
+                start: 'top 75%',
+                toggleActions: 'play none none reverse',
+              },
+            }
+          )
+        })
+      })
+
     }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
+  const handlePhotoTouch = (e: React.TouchEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    gsap.to(el, {
+      scale: 1.06,
+      rotation: 0,
+      boxShadow: '0 12px 40px #00000088, 0 0 20px #C8871A44',
+      duration: 0.3,
+      ease: 'power2.out',
+      zIndex: 10,
+    })
+  }
+
+  const handlePhotoTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    const el = e.currentTarget
+    const rotate = parseFloat(el.dataset.rotate || '0')
+    gsap.to(el, {
+      scale: 1,
+      rotation: rotate,
+      boxShadow: '3px 6px 18px #00000066',
+      duration: 0.4,
+      ease: 'power2.inOut',
+    })
+  }
+
   return (
     <section
       ref={sectionRef}
       style={{
-        background: 'var(--color-bg)',
-        padding: '8rem 0 10rem',
+        background: 'transparent',
+        padding: '6rem 0 8rem',
         position: 'relative',
       }}
     >
-      {/* Cabeçalho */}
-      <div style={{ padding: '0 2rem', marginBottom: '5rem', maxWidth: '480px', margin: '0 auto 5rem' }}>
+      <div style={{ padding: '0 2rem', marginBottom: '4rem' }}>
         <p style={{
           fontFamily: 'var(--font-detail)',
           fontSize: '0.7rem',
           letterSpacing: '0.35em',
           color: 'var(--color-gold)',
           textTransform: 'uppercase',
-          marginBottom: '1rem',
+          marginBottom: '0.75rem',
         }}>
           Janeiro → Maio · 2026
         </p>
@@ -115,26 +134,20 @@ export default function MomentsSection() {
           color: 'var(--color-sand)',
           fontStyle: 'italic',
         }}>
-          Cinco<br />meses
         </h2>
       </div>
 
-      {/* Timeline */}
       <div style={{ position: 'relative', maxWidth: '480px', margin: '0 auto', padding: '0 2rem' }}>
 
-        {/* Linha vertical */}
-        <div
-          className="timeline-line"
-          style={{
-            position: 'absolute',
-            left: '2.75rem',
-            top: 0,
-            bottom: 0,
-            width: '1px',
-            background: 'linear-gradient(to bottom, var(--color-gold), var(--color-wine))',
-            transformOrigin: 'top center',
-          }}
-        />
+        <div className="timeline-line" style={{
+          position: 'absolute',
+          left: '2.75rem',
+          top: 0,
+          bottom: 0,
+          width: '1px',
+          background: 'linear-gradient(to bottom, var(--color-gold), var(--color-wine))',
+          transformOrigin: 'top center',
+        }} />
 
         {MONTHS.map((entry, i) => (
           <div
@@ -147,9 +160,8 @@ export default function MomentsSection() {
               position: 'relative',
             }}
           >
-            {/* Bolinha da timeline */}
             <div style={{ flexShrink: 0, paddingTop: '0.25rem' }}>
-              <div style={{
+              <div className="timeline-dot" style={{
                 width: '12px',
                 height: '12px',
                 borderRadius: '50%',
@@ -161,10 +173,8 @@ export default function MomentsSection() {
               }} />
             </div>
 
-            {/* Conteúdo */}
-            <div style={{ flex: 1, paddingBottom: '1rem' }}>
-              {/* Mês + label */}
-              <div className="month-label" style={{ marginBottom: '1.25rem' }}>
+            <div style={{ flex: 1 }}>
+              <div className="month-label" style={{ marginBottom: '1.5rem', opacity: 0 }}>
                 <p style={{
                   fontFamily: 'var(--font-detail)',
                   fontSize: '0.65rem',
@@ -185,43 +195,74 @@ export default function MomentsSection() {
                 </p>
               </div>
 
-              {/* Fotos */}
+              {/* Grid de polaroids */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: entry.images.length === 1
-                  ? '1fr'
-                  : entry.images.length === 2
-                  ? '1fr 1fr'
-                  : '1fr 1fr',
-                gap: '0.5rem',
+                gridTemplateColumns: entry.images.length === 1 ? '1fr' : '1fr 1fr',
+                gap: '1.2rem',
+                padding: '0.5rem',
               }}>
-                {entry.images.map((img, j) => (
-                  <div
-                    key={img}
-                    className="photo-item"
-                    style={{
-                      // Se for 3 fotos, a primeira ocupa linha inteira
-                      gridColumn: entry.images.length === 3 && j === 0 ? '1 / -1' : 'auto',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      aspectRatio: entry.images.length === 3 && j === 0 ? '16/9' : '3/4',
-                      background: 'var(--color-surface)',
-                      border: '1px solid #2a1a0e',
-                    }}
-                  >
-                    <img
-                      src={`/${img}`}
-                      alt={`${entry.month} - foto ${j + 1}`}
+                {entry.images.map((img, j) => {
+                  const rotate = j % 2 === 0
+                    ? -3 + Math.random() * 2
+                    :  2 + Math.random() * 2
+
+                  return (
+                    <div
+                      key={img}
+                      className="photo-item"
+                      data-rotate={rotate}
+                      onTouchStart={handlePhotoTouch}
+                      onTouchEnd={handlePhotoTouchEnd}
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        objectPosition: 'center top',
-                        display: 'block',
+                        gridColumn: entry.images.length === 3 && j === 0 ? '1 / -1' : 'auto',
+                        opacity: 0,
+                        position: 'relative',
+                        zIndex: 1,
+                        cursor: 'pointer',
+
+                        // Efeito polaroid
+                        background: '#f5f0e8',
+                        padding: '8px 8px 28px 8px',
+                        boxShadow: '3px 6px 18px #00000066, 1px 2px 4px #00000044',
+                        borderRadius: '2px',
                       }}
-                    />
-                  </div>
-                ))}
+                    >
+                      {/* Foto */}
+                      <div style={{
+                        width: '100%',
+                        aspectRatio: entry.images.length === 3 && j === 0 ? '4/3' : '3/4',
+                        overflow: 'hidden',
+                        background: '#ddd',
+                      }}>
+                        <img
+                          src={`/${img}`}
+                          alt={`${entry.month} - foto ${j + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            objectPosition: 'center top',
+                            display: 'block',
+                          }}
+                        />
+                      </div>
+
+                      {/* Legenda polaroid */}
+                      <p style={{
+                        fontFamily: 'var(--font-detail)',
+                        fontSize: '0.6rem',
+                        color: '#5a4a3a',
+                        textAlign: 'center',
+                        marginTop: '6px',
+                        letterSpacing: '0.05em',
+                        fontStyle: 'italic',
+                      }}>
+                        {entry.month} · 2026
+                      </p>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>

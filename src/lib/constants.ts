@@ -2,7 +2,7 @@ export const COUPLE = {
   person1:    'Pedro',
   person2:    'Bruna',
   startDate:  new Date('2026-01-01'),
-  anniversary: '5 meses juntos',
+  anniversary: '4 meses juntos',
 }
 
 export const PALETTE = {

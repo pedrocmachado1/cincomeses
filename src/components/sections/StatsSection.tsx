@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/gsap'
 
 const STATS = [
-  { value: '5',   label: 'meses juntos'          },
+  { value: '4',   label: 'meses juntos'          },
   { value: '120', label: 'dias'                  },
   { value: '∞',   label: 'coincidências'         },
   { value: '1',   label: 'sambas'                },
