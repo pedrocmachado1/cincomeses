@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Serif+Display:ital@0;1&family=Courier+Prime:ital@0;1&display=swap');
+
+:root {
+  --color-bg:           #1c0f05;
+  --color-surface:      #2a1508;
+  --color-surface-2:    #3a2010;
+
+  --color-gold:         #C8871A;
+  --color-gold-light:   #E8A830;
+  --color-sand:         #F5E6C8;
+  --color-sand-muted:   #c9b99a;
+  --color-wine:         #8B1A1A;
+
+  --color-text:         var(--color-sand);
+  --color-text-muted:   var(--color-sand-muted);
+  --color-accent:       var(--color-gold);
+  --color-accent-hover: var(--color-gold-light);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Serif Display', Georgia, serif;
+  --font-detail:  'Courier Prime', 'Courier New', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  scroll-behavior: auto;
+}
+
+body {
+  width: 100%;
+  overflow-x: hidden;
+
+  /* Textura de madeira escura com veios */
+  background-color: #1c0f05;
+  background-image:
+    /* Luz quente vinda de cima, como um abajur de boteco */
+    radial-gradient(ellipse at 50% 0%, #3d1f0a88 0%, transparent 60%),
+    /* Veios horizontais de madeira */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 3px,
+      #00000018 3px,
+      #00000018 4px
+    ),
+    /* Veios diagonais sutis */
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      transparent 40px,
+      #ffffff04 40px,
+      #ffffff04 41px,
+      transparent 41px,
+      transparent 80px
+    ),
+    /* Nós de madeira simulados com gradientes radiais */
+    radial-gradient(ellipse 120px 60px at 20% 25%, #0d060288 0%, transparent 100%),
+    radial-gradient(ellipse 80px 40px  at 75% 55%, #0d060266 0%, transparent 100%),
+    radial-gradient(ellipse 100px 50px at 40% 80%, #0d060244 0%, transparent 100%),
+    /* Cor base amadeirada */
+    linear-gradient(160deg, #1f0f04 0%, #170a02 40%, #1c0e05 70%, #140802 100%);
+}
+
+/* Luz de boteco em cada seção — cada uma tem seu próprio abajur */
+section {
+  position: relative;
+}
+
+section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 300px at 50% 0%, #C8871A0a 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Superfície de seções alternadas — como a mesa iluminada */
+section[data-surface] {
+  background-color: #20100400 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, #2e160722 0%, transparent 70%),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 4px,
+      #00000014 4px,
+      #00000014 5px
+    ),
+    linear-gradient(170deg, #23120500 0%, #1a0b0300 100%);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #110800; }
+::-webkit-scrollbar-thumb { background: var(--color-gold); border-radius: 2px; }
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-bg);
+}
+
+/* Brilho dourado nas bordas — como o reflexo da luz no copo */
+@keyframes shimmer {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.gold-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
