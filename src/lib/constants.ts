@@ -23,22 +23,22 @@ export const MONTHS = [
   },
   {
     month: 'Fevereiro',
-    label: 'Dias com chimarrão',
+    label: 'Porto Alegre é DEMAIS',
     images: ['fev-1.jpg', 'fev-2.jpg'],
   },
   {
     month: 'Março',
-    label: 'Pagode e cerveja',
+    label: 'Primeiro título juntos',
     images: ['mar-1.jpg'],
   },
   {
     month: 'Abril',
-    label: 'No estádio juntos',
+    label: 'Vivendo de Grêmio',
     images: ['abr-1.jpg', 'abr-2.jpg', 'abr-3.jpg'],
   },
   {
     month: 'Maio',
-    label: 'Pôr do sol a dois',
+    label: 'Pôr do sol',
     images: ['mai-1.jpg', 'mai-2.jpg'],
   },
 ]
